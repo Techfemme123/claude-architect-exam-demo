@@ -1,0 +1,26 @@
+name: Daily Lesson
+
+on:
+  schedule:
+    - cron: "0 16 * * *"   # 16:00 UTC = 21:00 Pakistan time (UTC+5)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  daily-lesson:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Read CLAUDE.md and prep-plan.md. Add one new note in notes/ for the
+            next uncovered topic, with 3-5 practice questions. Markdown only.
+            Create a branch claude/daily-lesson-<date>, commit, and open a PR to main.
+          claude_args: |
+            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(git:*),Bash(gh:*)"
